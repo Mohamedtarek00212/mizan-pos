@@ -1,0 +1,121 @@
+{
+  "name": "mizan-pos-desktop",
+  "productName": "Mizan POS",
+  "version": "0.1.2",
+  "private": true,
+  "description": "Secure Electron shell for Mizan POS",
+  "author": "Mizan POS",
+  "license": "UNLICENSED",
+  "main": "dist/main.js",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test tests/*.test.cjs",
+    "dev": "npm run build && concurrently --kill-others --success first \"npm:dev:renderer\" \"npm:dev:electron\"",
+    "dev:renderer": "npm --prefix ../frontend run dev -- --host localhost --port 5174",
+    "dev:electron": "wait-on http://localhost:5174 && cross-env ELECTRON_RENDERER_URL=http://localhost:5174 electron .",
+    "start": "npm run build && electron .",
+    "build:renderer": "npm --prefix ../frontend run build",
+    "prepare:standalone": "node scripts/prepare-standalone-runtime.cjs",
+    "ensure:runtimes:mac": "node scripts/ensure-native-runtimes.cjs darwin-arm64 darwin-x64",
+    "ensure:runtimes:win": "node scripts/ensure-native-runtimes.cjs windows-x64",
+    "validate:runtimes": "node scripts/validate-native-runtimes.cjs",
+    "test:installer": "node scripts/verify-installer-config.cjs",
+    "checksums": "node scripts/generate-checksums.cjs",
+    "package:acceptance:win": "node scripts/create-windows-acceptance-kit.cjs",
+    "test:standalone": "npm run build && npm run prepare:standalone && node scripts/test-standalone-runtime.cjs",
+    "package:dir": "node scripts/ensure-native-runtimes.cjs && npm run validate:runtimes && npm run build:renderer && npm run build && npm run prepare:standalone && npm run test:installer && electron-builder --dir",
+    "package:mac": "npm run ensure:runtimes:mac && node scripts/validate-native-runtimes.cjs darwin-arm64 darwin-x64 && npm run build:renderer && npm run build && npm run prepare:standalone && npm run test:installer && electron-builder --mac dmg --publish never",
+    "package:mac:all": "npm run ensure:runtimes:mac && node scripts/validate-native-runtimes.cjs darwin-arm64 darwin-x64 && npm run build:renderer && npm run build && npm run prepare:standalone && npm run test:installer && electron-builder --mac dmg --arm64 --x64 --publish never",
+    "package:win": "npm run ensure:runtimes:win && node scripts/validate-native-runtimes.cjs windows-x64 && npm run build:renderer && npm run build && npm run prepare:standalone && npm run test:installer && electron-builder --win nsis --x64 --publish never",
+    "release:mac": "node scripts/validate-release-env.cjs mac && npm run ensure:runtimes:mac && node scripts/validate-native-runtimes.cjs darwin-arm64 darwin-x64 && npm run build:renderer && npm run build && npm run prepare:standalone && npm run test:installer && electron-builder --config electron-builder.release.cjs --mac --arm64 --x64 --publish never",
+    "release:win": "node scripts/validate-release-env.cjs win && npm run ensure:runtimes:win && node scripts/validate-native-runtimes.cjs windows-x64 && npm run build:renderer && npm run build && npm run prepare:standalone && npm run test:installer && electron-builder --config electron-builder.release.cjs --win --x64 --publish never"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/pg": "^8.16.0",
+    "concurrently": "10.0.5",
+    "cross-env": "10.1.0",
+    "electron": "44.3.0",
+    "electron-builder": "26.15.3",
+    "typescript": "7.0.2",
+    "wait-on": "9.1.0"
+  },
+  "build": {
+    "appId": "com.mizan.pos",
+    "productName": "Mizan POS",
+    "asar": true,
+    "directories": {
+      "output": "release",
+      "buildResources": "assets"
+    },
+    "files": [
+      "dist/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/@embedded-postgres/**/*"
+    ],
+    "afterPack": "scripts/after-pack.cjs",
+    "afterAllArtifactBuild": "scripts/after-all-artifacts.cjs",
+    "extraResources": [
+      {
+        "from": "../frontend/dist",
+        "to": "renderer",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "runtime/backend",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "mac": {
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.business",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "identity": null
+    },
+    "dmg": {
+      "title": "Mizan POS ${version}",
+      "artifactName": "Mizan-POS-${version}-${arch}.${ext}"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "artifactName": "Mizan-POS-Setup-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true,
+      "uninstallDisplayName": "Mizan POS"
+    }
+  },
+  "dependencies": {
+    "electron-updater": "6.8.9",
+    "embedded-postgres": "^16.14.0-beta.17",
+    "pg": "^8.23.0",
+    "tar": "^7.5.22"
+  },
+  "optionalDependencies": {
+    "@embedded-postgres/darwin-arm64": "16.14.0-beta.17",
+    "@embedded-postgres/darwin-x64": "16.14.0-beta.17",
+    "@embedded-postgres/windows-x64": "16.14.0-beta.17"
+  }
+}

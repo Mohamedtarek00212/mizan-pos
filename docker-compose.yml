@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pos_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pos_user
+      POSTGRES_PASSWORD: pos_password
+      POSTGRES_DB: pos_db
+    ports:
+      - "55432:5432"
+    volumes:
+      - pos_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  pos_postgres_data:

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'unsafe-inline'" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mizan POS</title>
+    <style>
+      * { box-sizing: border-box; }
+      html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+      body { display: grid; place-items: center; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #fff; background: radial-gradient(circle at 78% 15%, rgba(51,225,166,.32), transparent 36%), linear-gradient(145deg,#09271f,#075b43 64%,#0ca678); user-select: none; }
+      .shell { position: relative; width: 100%; height: 100%; display: grid; place-items: center; padding: 34px; text-align: center; }
+      .shell::before, .shell::after { content: ""; position: absolute; border: 1px solid rgba(255,255,255,.09); transform: rotate(45deg); }
+      .shell::before { width: 170px; height: 170px; top: -100px; left: -70px; }
+      .shell::after { width: 110px; height: 110px; right: -70px; bottom: -55px; }
+      img { width: 88px; height: 88px; border-radius: 24px; background: #ecfff8; box-shadow: 0 18px 42px rgba(0,0,0,.2); }
+      h1 { margin: 17px 0 2px; font-size: 34px; letter-spacing: -.03em; }
+      .english { color: #a8d7c7; font-size: 13px; font-weight: 700; letter-spacing: .18em; }
+      p { margin: 13px 0 22px; color: #c6e8dc; font-size: 12px; }
+      .progress { overflow: hidden; width: 190px; height: 3px; margin: auto; border-radius: 999px; background: rgba(255,255,255,.15); }
+      .progress span { display: block; width: 45%; height: 100%; border-radius: inherit; background: #77ebc4; animation: loading 1.15s ease-in-out infinite; }
+      @keyframes loading { from { transform: translateX(230%); } to { transform: translateX(-230%); } }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <div>
+        <img src="icon.png" alt="" />
+        <h1>ميزان</h1>
+        <div class="english">MIZAN POS</div>
+        <p>مساحة عمل متوازنة لمتجرك</p>
+        <div class="progress" aria-label="جارٍ تشغيل النظام"><span></span></div>
+      </div>
+    </main>
+  </body>
+</html>
