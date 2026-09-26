@@ -4,7 +4,6 @@ build/
 release/
 .cache/
 .idea/
-.github/workflows/
 .env
 .env.*
 .env.local
